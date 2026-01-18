@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/db/supabase';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
 // GET /api/scripts/[id] - Get single script
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const { data, error } = await supabase
       .from('scripts')
@@ -40,8 +35,9 @@ export async function GET(
 // PATCH /api/scripts/[id] - Update script
 export async function PATCH(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const body = await request.json();
     const { title, logline, elements, status, metadata } = body;
@@ -74,8 +70,9 @@ export async function PATCH(
 // DELETE /api/scripts/[id] - Delete script
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const { error } = await supabase
       .from('scripts')
