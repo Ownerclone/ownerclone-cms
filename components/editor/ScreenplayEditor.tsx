@@ -212,9 +212,20 @@ export default function ScreenplayEditor({
     if (e.key === 'Enter' && !showAutocomplete) {
       e.preventDefault();
       
+      const currentElement = elements[index];
+      let newElementType: ElementType = 'action';
+      
+      if (currentElement.type === 'character') {
+        newElementType = 'dialogue';
+      } else if (currentElement.type === 'dialogue') {
+        newElementType = 'action';
+      } else if (currentElement.type === 'parenthetical') {
+        newElementType = 'dialogue';
+      }
+      
       const newElement: ScriptElement = {
         id: 'element-' + Date.now().toString(),
-        type: 'action',
+        type: newElementType,
         content: ''
       };
 
