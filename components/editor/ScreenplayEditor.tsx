@@ -39,24 +39,20 @@ export default function ScreenplayEditor({
   const [selectedAutocomplete, setSelectedAutocomplete] = useState(0);
   const textareaRefs = useRef<Map<number, HTMLTextAreaElement>>(new Map());
 
-  // Load characters from database
   useEffect(() => {
     loadCharacters();
   }, []);
 
-  // Track characters in current scene
   useEffect(() => {
     const charNames = new Set<string>();
     let inCurrentScene = false;
     
     for (const element of elements) {
-      // New scene heading resets the character list
       if (element.type === 'scene_heading') {
         charNames.clear();
         inCurrentScene = true;
       }
       
-      // Track character names in this scene
       if (element.type === 'character' && inCurrentScene) {
         const name = element.content.split('(')[0].trim();
         if (name) charNames.add(name);
@@ -76,7 +72,6 @@ export default function ScreenplayEditor({
     }
   };
 
-  // Auto-save every 10 seconds
   useEffect(() => {
     if (!autoSave || !onSave) return;
 
@@ -106,28 +101,25 @@ export default function ScreenplayEditor({
     const inputLower = input.toLowerCase();
     const suggestions: string[] = [];
     
-    // First: Characters already in this scene
     sceneCharacters.forEach(name => {
       if (name.toLowerCase().startsWith(inputLower)) {
         suggestions.push(name);
       }
     });
     
-    // Then: Characters from database not yet in scene
     characters.forEach(char => {
       if (char.name.toLowerCase().startsWith(inputLower) && !sceneCharacters.has(char.name)) {
         suggestions.push(char.name);
       }
     });
     
-    return [...new Set(suggestions)]; // Remove duplicates
+    return [...new Set(suggestions)];
   };
 
   const updateElement = (index: number, content: string) => {
     const previousElement = index > 0 ? elements[index - 1] : undefined;
     const currentElement = elements[index];
     
-    // Show autocomplete for character names
     if (currentElement.type === 'character' || 
         (previousElement?.type === 'dialogue' && content.length > 0 && content === content.toUpperCase())) {
       const suggestions = getCharacterSuggestions(content);
@@ -164,7 +156,6 @@ export default function ScreenplayEditor({
     setElements(newElements);
     setShowAutocomplete(false);
     
-    // Focus the textarea
     setTimeout(() => {
       const ref = textareaRefs.current.get(index);
       if (ref) {
@@ -175,7 +166,6 @@ export default function ScreenplayEditor({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>, index: number) => {
-    // Handle autocomplete navigation
     if (showAutocomplete) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -203,7 +193,6 @@ export default function ScreenplayEditor({
       }
     }
 
-    // TAB: Cycle element type (when not autocompleting)
     if (e.key === 'Tab' && !showAutocomplete) {
       e.preventDefault();
       const currentType = elements[index].type;
@@ -220,7 +209,6 @@ export default function ScreenplayEditor({
       return;
     }
 
-    // ENTER: Create new line
     if (e.key === 'Enter' && !showAutocomplete) {
       e.preventDefault();
       
@@ -234,7 +222,6 @@ export default function ScreenplayEditor({
       newElements.splice(index + 1, 0, newElement);
       setElements(newElements);
 
-      // Focus next element
       setTimeout(() => {
         const nextRef = textareaRefs.current.get(index + 1);
         if (nextRef) nextRef.focus();
@@ -242,13 +229,11 @@ export default function ScreenplayEditor({
       return;
     }
 
-    // BACKSPACE on empty line: Delete line
     if (e.key === 'Backspace' && !elements[index].content && elements.length > 1) {
       e.preventDefault();
       const newElements = elements.filter((_, i) => i !== index);
       setElements(newElements);
       
-      // Focus previous element
       setTimeout(() => {
         const prevRef = textareaRefs.current.get(Math.max(0, index - 1));
         if (prevRef) {
@@ -259,7 +244,6 @@ export default function ScreenplayEditor({
       return;
     }
 
-    // CMD/CTRL + S: Save
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
       handleSave();
@@ -276,7 +260,7 @@ export default function ScreenplayEditor({
       case 'character':
         return `${baseStyle} w-full font-bold uppercase text-center`;
       case 'dialogue':
-        return `${baseStyle} block mx-auto w-[400px]`; // Fixed width, centered
+        return `${baseStyle} block mx-auto w-[400px]`;
       case 'parenthetical':
         return `${baseStyle} block mx-auto w-[300px] italic text-gray-600 text-center`;
       case 'transition':
@@ -301,7 +285,6 @@ export default function ScreenplayEditor({
     }, 0);
   };
 
-  // Initialize with one empty element if none exist
   useEffect(() => {
     if (elements.length === 0) {
       setElements([{
@@ -314,7 +297,6 @@ export default function ScreenplayEditor({
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Toolbar */}
       <div className="border-b px-6 py-3 flex items-center justify-between bg-gray-50">
         <div className="flex items-center gap-4">
           <button
@@ -356,12 +338,10 @@ export default function ScreenplayEditor({
         </div>
       </div>
 
-      {/* Editor */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-5xl mx-auto py-12">
           {elements.map((element, index) => (
             <div key={element.id} className="relative group">
-              {/* Element type indicator */}
               <div className="absolute left-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity -ml-20 w-16 text-right">
                 {element.type}
               </div>
@@ -385,7 +365,6 @@ export default function ScreenplayEditor({
                 minRows={1}
               />
               
-              {/* Autocomplete dropdown */}
               {showAutocomplete && index === currentElementIndex && autocompleteOptions.length > 0 && (
                 <div className="absolute left-1/2 transform -translate-x-1/2 mt-1 bg-white border rounded-lg shadow-lg z-10 min-w-[200px]">
                   {autocompleteOptions.map((option, i) => (
@@ -407,7 +386,6 @@ export default function ScreenplayEditor({
             </div>
           ))}
 
-          {/* Add element button */}
           <button
             onClick={addNewElement}
             className="mx-4 mt-4 px-4 py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded border-2 border-dashed border-gray-300"
@@ -417,440 +395,6 @@ export default function ScreenplayEditor({
         </div>
       </div>
 
-      {/* Status bar */}
-      <div className="border-t px-6 py-2 bg-gray-50 text-xs text-gray-600 flex items-center justify-between">
-        <div>
-          Line {currentElementIndex + 1} of {elements.length}
-        </div>
-        <div className="flex items-center gap-2">
-          {autoSave && (
-            <span className="text-green-600">Auto-save enabled</span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}'use client';
-
-import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
-import { ScriptElement, ElementType } from '@/types/screenplay';
-import { ScreenplayFormatter, ELEMENT_CYCLE } from '@/lib/screenplay/formatter';
-import { Save, RotateCcw } from 'lucide-react';
-
-interface Character {
-  id: string;
-  name: string;
-  description: string;
-  personality_traits: string[];
-  voice_notes?: string;
-  avatar_url?: string;
-  created_at: string;
-}
-
-interface ScreenplayEditorProps {
-  scriptId?: string;
-  initialElements?: ScriptElement[];
-  onSave?: (elements: ScriptElement[]) => void;
-  autoSave?: boolean;
-}
-
-export default function ScreenplayEditor({ 
-  scriptId,
-  initialElements = [],
-  onSave,
-  autoSave = true 
-}: ScreenplayEditorProps) {
-  const [elements, setElements] = useState<ScriptElement[]>(initialElements);
-  const [currentElementIndex, setCurrentElementIndex] = useState(0);
-  const [isSaving, setIsSaving] = useState(false);
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [sceneCharacters, setSceneCharacters] = useState<Set<string>>(new Set());
-  const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
-  const [selectedAutocomplete, setSelectedAutocomplete] = useState(0);
-  const textareaRefs = useRef<Map<number, HTMLTextAreaElement>>(new Map());
-
-  // Load characters from database
-  useEffect(() => {
-    loadCharacters();
-  }, []);
-
-  // Track characters in current scene
-  useEffect(() => {
-    const charNames = new Set<string>();
-    let inCurrentScene = false;
-    
-    for (const element of elements) {
-      // New scene heading resets the character list
-      if (element.type === 'scene_heading') {
-        charNames.clear();
-        inCurrentScene = true;
-      }
-      
-      // Track character names in this scene
-      if (element.type === 'character' && inCurrentScene) {
-        const name = element.content.split('(')[0].trim();
-        if (name) charNames.add(name);
-      }
-    }
-    
-    setSceneCharacters(charNames);
-  }, [elements]);
-
-  const loadCharacters = async () => {
-    try {
-      const res = await fetch('/api/characters');
-      const data = await res.json();
-      setCharacters(data.characters || []);
-    } catch (error) {
-      console.error('Failed to load characters:', error);
-    }
-  };
-
-  // Auto-save every 10 seconds
-  useEffect(() => {
-    if (!autoSave || !onSave) return;
-
-    const timer = setInterval(() => {
-      handleSave();
-    }, 10000);
-
-    return () => clearInterval(timer);
-  }, [elements, autoSave, onSave]);
-
-  const handleSave = async () => {
-    if (!onSave) return;
-    
-    setIsSaving(true);
-    try {
-      await onSave(elements);
-    } catch (error) {
-      console.error('Save failed:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const getCharacterSuggestions = (input: string): string[] => {
-    if (!input) return [];
-    
-    const inputLower = input.toLowerCase();
-    const suggestions: string[] = [];
-    
-    // First: Characters already in this scene
-    sceneCharacters.forEach(name => {
-      if (name.toLowerCase().startsWith(inputLower)) {
-        suggestions.push(name);
-      }
-    });
-    
-    // Then: Characters from database not yet in scene
-    characters.forEach(char => {
-      if (char.name.toLowerCase().startsWith(inputLower) && !sceneCharacters.has(char.name)) {
-        suggestions.push(char.name);
-      }
-    });
-    
-    return [...new Set(suggestions)]; // Remove duplicates
-  };
-
-  const updateElement = (index: number, content: string) => {
-    const previousElement = index > 0 ? elements[index - 1] : undefined;
-    const currentElement = elements[index];
-    
-    // Show autocomplete for character names
-    if (currentElement.type === 'character' || 
-        (previousElement?.type === 'dialogue' && content.length > 0 && content === content.toUpperCase())) {
-      const suggestions = getCharacterSuggestions(content);
-      if (suggestions.length > 0) {
-        setAutocompleteOptions(suggestions);
-        setShowAutocomplete(true);
-        setSelectedAutocomplete(0);
-      } else {
-        setShowAutocomplete(false);
-      }
-    } else {
-      setShowAutocomplete(false);
-    }
-    
-    const formatted = ScreenplayFormatter.autoFormatLine(content, previousElement);
-
-    const newElements = [...elements];
-    newElements[index] = {
-      ...newElements[index],
-      content: formatted.content,
-      type: formatted.type
-    };
-
-    setElements(newElements);
-  };
-
-  const acceptAutocomplete = (index: number, suggestion: string) => {
-    const newElements = [...elements];
-    newElements[index] = {
-      ...newElements[index],
-      content: suggestion,
-      type: 'character'
-    };
-    setElements(newElements);
-    setShowAutocomplete(false);
-    
-    // Focus the textarea
-    setTimeout(() => {
-      const ref = textareaRefs.current.get(index);
-      if (ref) {
-        ref.focus();
-        ref.setSelectionRange(suggestion.length, suggestion.length);
-      }
-    }, 0);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>, index: number) => {
-    // Handle autocomplete navigation
-    if (showAutocomplete) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setSelectedAutocomplete((prev) => 
-          Math.min(prev + 1, autocompleteOptions.length - 1)
-        );
-        return;
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setSelectedAutocomplete((prev) => Math.max(prev - 1, 0));
-        return;
-      }
-      if (e.key === 'Tab' || e.key === 'Enter') {
-        if (autocompleteOptions.length > 0) {
-          e.preventDefault();
-          acceptAutocomplete(index, autocompleteOptions[selectedAutocomplete]);
-          return;
-        }
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setShowAutocomplete(false);
-        return;
-      }
-    }
-
-    // TAB: Cycle element type (when not autocompleting)
-    if (e.key === 'Tab' && !showAutocomplete) {
-      e.preventDefault();
-      const currentType = elements[index].type;
-      const currentIndex = ELEMENT_CYCLE.indexOf(currentType);
-      const nextType = ELEMENT_CYCLE[(currentIndex + 1) % ELEMENT_CYCLE.length];
-      
-      const newElements = [...elements];
-      newElements[index] = {
-        ...newElements[index],
-        type: nextType,
-        content: ScreenplayFormatter.formatText(newElements[index].content, nextType)
-      };
-      setElements(newElements);
-      return;
-    }
-
-    // ENTER: Create new line
-    if (e.key === 'Enter' && !showAutocomplete) {
-      e.preventDefault();
-      
-      const newElement: ScriptElement = {
-        id: `element-${Date.now()}`,
-        type: 'action',
-        content: ''
-      };
-
-      const newElements = [...elements];
-      newElements.splice(index + 1, 0, newElement);
-      setElements(newElements);
-
-      // Focus next element
-      setTimeout(() => {
-        const nextRef = textareaRefs.current.get(index + 1);
-        if (nextRef) nextRef.focus();
-      }, 0);
-      return;
-    }
-
-    // BACKSPACE on empty line: Delete line
-    if (e.key === 'Backspace' && !elements[index].content && elements.length > 1) {
-      e.preventDefault();
-      const newElements = elements.filter((_, i) => i !== index);
-      setElements(newElements);
-      
-      // Focus previous element
-      setTimeout(() => {
-        const prevRef = textareaRefs.current.get(Math.max(0, index - 1));
-        if (prevRef) {
-          prevRef.focus();
-          prevRef.setSelectionRange(prevRef.value.length, prevRef.value.length);
-        }
-      }, 0);
-      return;
-    }
-
-    // CMD/CTRL + S: Save
-    if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-      e.preventDefault();
-      handleSave();
-      return;
-    }
-  };
-I see the issue - dialogue needs a wrapping container to properly center. Let me create a better fix:
-Replace the entire getElementStyle function with this:
-typescript  const getElementStyle = (type: ElementType): string => {
-    const baseStyle = 'px-4 py-2 resize-none focus:outline-none transition-colors';
-    
-    switch (type) {
-      case 'scene_heading':
-        return `${baseStyle} w-full font-bold uppercase text-lg`;
-      case 'character':
-        return `${baseStyle} w-full font-bold uppercase text-center`;
-      case 'dialogue':
-        return `${baseStyle} block mx-auto w-[400px]`; // Fixed width, centered
-      case 'parenthetical':
-        return `${baseStyle} block mx-auto w-[300px] italic text-gray-600 text-center`;
-      case 'transition':
-        return `${baseStyle} w-full text-right font-bold uppercase`;
-      case 'action':
-      default:
-        return `${baseStyle} w-full`;
-    }
-  };
-
-  const addNewElement = () => {
-    const newElement: ScriptElement = {
-      id: `element-${Date.now()}`,
-      type: 'action',
-      content: ''
-    };
-    setElements([...elements, newElement]);
-    
-    setTimeout(() => {
-      const lastRef = textareaRefs.current.get(elements.length);
-      if (lastRef) lastRef.focus();
-    }, 0);
-  };
-
-  // Initialize with one empty element if none exist
-  useEffect(() => {
-    if (elements.length === 0) {
-      setElements([{
-        id: 'element-initial',
-        type: 'action',
-        content: ''
-      }]);
-    }
-  }, []);
-
-  return (
-    <div className="h-full flex flex-col bg-white">
-      {/* Toolbar */}
-      <div className="border-b px-6 py-3 flex items-center justify-between bg-gray-50">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isSaving ? (
-              <>
-                <RotateCcw className="w-4 h-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Save
-              </>
-            )}
-          </button>
-          
-          <div className="text-sm text-gray-600">
-            {elements.length} elements
-          </div>
-          
-          {sceneCharacters.size > 0 && (
-            <div className="text-sm text-gray-500">
-              In scene: {Array.from(sceneCharacters).join(', ')}
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <kbd className="px-2 py-1 bg-gray-200 rounded">TAB</kbd>
-          <span>Change type / Autocomplete</span>
-          <kbd className="px-2 py-1 bg-gray-200 rounded">ENTER</kbd>
-          <span>New line</span>
-          <kbd className="px-2 py-1 bg-gray-200 rounded">⌘S</kbd>
-          <span>Save</span>
-        </div>
-      </div>
-
-      {/* Editor */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-5xl mx-auto py-12">
-          {elements.map((element, index) => (
-            <div key={element.id} className="relative group">
-              {/* Element type indicator */}
-              <div className="absolute left-0 top-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity -ml-20 w-16 text-right">
-                {element.type}
-              </div>
-
-              <TextareaAutosize
-                ref={(ref) => {
-                  if (ref) textareaRefs.current.set(index, ref);
-                }}
-                value={element.content}
-                onChange={(e) => updateElement(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                onFocus={() => setCurrentElementIndex(index)}
-                placeholder={
-                  element.type === 'action' ? 'Action...' :
-                  element.type === 'character' ? 'CHARACTER NAME' :
-                  element.type === 'dialogue' ? 'Dialogue...' :
-                  element.type === 'scene_heading' ? 'INT./EXT. LOCATION - TIME' :
-                  'Type here...'
-                }
-                className={getElementStyle(element.type)}
-                minRows={1}
-              />
-              
-              {/* Autocomplete dropdown */}
-              {showAutocomplete && index === currentElementIndex && autocompleteOptions.length > 0 && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 mt-1 bg-white border rounded-lg shadow-lg z-10 min-w-[200px]">
-                  {autocompleteOptions.map((option, i) => (
-                    <button
-                      key={option}
-                      onClick={() => acceptAutocomplete(index, option)}
-                      className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                        i === selectedAutocomplete ? 'bg-blue-100' : ''
-                      }`}
-                    >
-                      {option}
-                      {sceneCharacters.has(option) && (
-                        <span className="ml-2 text-xs text-blue-600">(in scene)</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Add element button */}
-          <button
-            onClick={addNewElement}
-            className="mx-4 mt-4 px-4 py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded border-2 border-dashed border-gray-300"
-          >
-            + Add element
-          </button>
-        </div>
-      </div>
-
-      {/* Status bar */}
       <div className="border-t px-6 py-2 bg-gray-50 text-xs text-gray-600 flex items-center justify-between">
         <div>
           Line {currentElementIndex + 1} of {elements.length}
