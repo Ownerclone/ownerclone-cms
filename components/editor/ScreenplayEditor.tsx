@@ -266,24 +266,25 @@ export default function ScreenplayEditor({
       return;
     }
   };
-
-  const getElementStyle = (type: ElementType): string => {
-    const baseStyle = 'px-4 py-2 w-full resize-none focus:outline-none transition-colors';
+I see the issue - dialogue needs a wrapping container to properly center. Let me create a better fix:
+Replace the entire getElementStyle function with this:
+typescript  const getElementStyle = (type: ElementType): string => {
+    const baseStyle = 'px-4 py-2 resize-none focus:outline-none transition-colors';
     
     switch (type) {
       case 'scene_heading':
-        return `${baseStyle} font-bold uppercase text-lg`;
+        return `${baseStyle} w-full font-bold uppercase text-lg`;
       case 'character':
-        return `${baseStyle} font-bold uppercase mx-auto text-center max-w-2xl`;
+        return `${baseStyle} w-full font-bold uppercase text-center`;
       case 'dialogue':
-        return `${baseStyle} mx-auto max-w-md`; // Narrower and centered
+        return `${baseStyle} block mx-auto w-[400px]`; // Fixed width, centered
       case 'parenthetical':
-        return `${baseStyle} mx-auto italic text-gray-600 max-w-sm text-center`;
+        return `${baseStyle} block mx-auto w-[300px] italic text-gray-600 text-center`;
       case 'transition':
-        return `${baseStyle} text-right font-bold uppercase`;
+        return `${baseStyle} w-full text-right font-bold uppercase`;
       case 'action':
       default:
-        return `${baseStyle}`;
+        return `${baseStyle} w-full`;
     }
   };
 
