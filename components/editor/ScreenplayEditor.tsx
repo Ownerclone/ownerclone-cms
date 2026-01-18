@@ -266,23 +266,24 @@ export default function ScreenplayEditor({
       case 'transition':
         return `${baseStyle} w-full text-right font-bold uppercase`;
       case 'action':
-      default:
-        return `${baseStyle} w-full`;
-    }
-  };
-
-  const addNewElement = () => {
-    const newElement: ScriptElement = {
-      id: `element-${Date.now()}`,
-      type: 'action',
-      content: ''
-    };
-    setElements([...elements, newElement]);
+      const getElementStyle = (type: ElementType): string => {
+    const baseStyle = 'px-4 py-2 resize-none focus:outline-none transition-colors';
     
-    setTimeout(() => {
-      const lastRef = textareaRefs.current.get(elements.length);
-      if (lastRef) lastRef.focus();
-    }, 0);
+    switch (type) {
+      case 'scene_heading':
+        return baseStyle + ' w-full font-bold uppercase text-lg';
+      case 'character':
+        return baseStyle + ' w-full font-bold uppercase text-center';
+      case 'dialogue':
+        return baseStyle + ' block mx-auto w-[400px]';
+      case 'parenthetical':
+        return baseStyle + ' block mx-auto w-[300px] italic text-gray-600 text-center';
+      case 'transition':
+        return baseStyle + ' w-full text-right font-bold uppercase';
+      case 'action':
+      default:
+        return baseStyle + ' w-full';
+    }
   };
 
   useEffect(() => {
