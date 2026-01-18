@@ -213,7 +213,7 @@ export default function ScreenplayEditor({
       e.preventDefault();
       
       const newElement: ScriptElement = {
-        id: `element-${Date.now()}`,
+        id: 'element-' + Date.now().toString(),
         type: 'action',
         content: ''
       };
@@ -256,21 +256,6 @@ export default function ScreenplayEditor({
     
     switch (type) {
       case 'scene_heading':
-        return `${baseStyle} w-full font-bold uppercase text-lg`;
-      case 'character':
-        return `${baseStyle} w-full font-bold uppercase text-center`;
-      case 'dialogue':
-        return `${baseStyle} block mx-auto w-[400px]`;
-      case 'parenthetical':
-        return `${baseStyle} block mx-auto w-[300px] italic text-gray-600 text-center`;
-      case 'transition':
-        return `${baseStyle} w-full text-right font-bold uppercase`;
-      case 'action':
-      const getElementStyle = (type: ElementType): string => {
-    const baseStyle = 'px-4 py-2 resize-none focus:outline-none transition-colors';
-    
-    switch (type) {
-      case 'scene_heading':
         return baseStyle + ' w-full font-bold uppercase text-lg';
       case 'character':
         return baseStyle + ' w-full font-bold uppercase text-center';
@@ -284,6 +269,20 @@ export default function ScreenplayEditor({
       default:
         return baseStyle + ' w-full';
     }
+  };
+
+  const addNewElement = () => {
+    const newElement: ScriptElement = {
+      id: 'element-' + Date.now().toString(),
+      type: 'action',
+      content: ''
+    };
+    setElements([...elements, newElement]);
+    
+    setTimeout(() => {
+      const lastRef = textareaRefs.current.get(elements.length);
+      if (lastRef) lastRef.focus();
+    }, 0);
   };
 
   useEffect(() => {
@@ -372,9 +371,7 @@ export default function ScreenplayEditor({
                     <button
                       key={option}
                       onClick={() => acceptAutocomplete(index, option)}
-                      className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                        i === selectedAutocomplete ? 'bg-blue-100' : ''
-                      }`}
+                      className={'w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors' + (i === selectedAutocomplete ? ' bg-blue-100' : '')}
                     >
                       {option}
                       {sceneCharacters.has(option) && (
