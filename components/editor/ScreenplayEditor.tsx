@@ -4,7 +4,9 @@ import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { ScriptElement, ElementType } from '@/types/screenplay';
 import { ScreenplayFormatter, ELEMENT_CYCLE } from '@/lib/screenplay/formatter';
-import { Save, RotateCcw } from 'lucide-react';
+import { Save, RotateCcw, Keyboard } from 'lucide-react';
+import ShortcutsHelp from '@/components/ShortcutsHelp';
+import ScriptStats from '@/components/ScriptStats';
 
 interface Character {
   id: string;
@@ -38,6 +40,7 @@ export default function ScreenplayEditor({
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
   const [selectedAutocomplete, setSelectedAutocomplete] = useState(0);
   const textareaRefs = useRef<Map<number, HTMLTextAreaElement>>(new Map());
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   useEffect(() => {
     loadCharacters();
@@ -260,6 +263,12 @@ export default function ScreenplayEditor({
       handleSave();
       return;
     }
+
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      setShowShortcuts(true);
+      return;
+    }
   };
 
   const getElementStyle = (type: ElementType): string => {
@@ -327,6 +336,16 @@ export default function ScreenplayEditor({
               </>
             )}
           </button>
+
+          <button
+            onClick={() => setShowShortcuts(true)}
+            className="flex items-center gap-2 px-4 py-2 border rounded hover:bg-gray-50"
+          >
+            <Keyboard className="w-4 h-4" />
+            Shortcuts
+          </button>
+
+          <ScriptStats elements={elements} />
           
           <div className="text-sm text-gray-600">
             {elements.length} elements
@@ -413,6 +432,11 @@ export default function ScreenplayEditor({
             <span className="text-green-600">Auto-save enabled</span>
           )}
         </div>
+      </div>
+
+      {showShortcuts && (
+        <ShortcutsHelp onClose={() => setShowShortcuts(false)} />
+      )}
     </div>
   );
 }
