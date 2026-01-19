@@ -317,54 +317,66 @@ export default function ScreenplayEditor({
 
   return (
     <div className="h-full flex flex-col bg-white">
-      <div className="border-b px-6 py-3 flex items-center justify-between bg-gray-50">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isSaving ? (
-              <>
-                <RotateCcw className="w-4 h-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Save
-              </>
-            )}
-          </button>
+      <div className="border-b bg-gray-50">
+        {/* Top row - Buttons */}
+        <div className="px-6 py-3 flex items-center justify-between border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isSaving ? (
+                <>
+                  <RotateCcw className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save
+                </>
+              )}
+            </button>
 
-          <button
-            onClick={() => setShowShortcuts(true)}
-            className="flex items-center gap-2 px-4 py-2 border rounded hover:bg-gray-50"
-          >
-            <Keyboard className="w-4 h-4" />
-            Shortcuts
-          </button>
-
-          <ScriptStats elements={elements} />
-          
-          <div className="text-sm text-gray-600">
-            {elements.length} elements
+            <button
+              onClick={() => setShowShortcuts(true)}
+              className="flex items-center gap-2 px-4 py-2 border rounded hover:bg-gray-50"
+            >
+              <Keyboard className="w-4 h-4" />
+              Shortcuts
+            </button>
           </div>
-          
-          {sceneCharacters.size > 0 && (
-            <div className="text-sm text-gray-500">
-              In scene: {Array.from(sceneCharacters).join(', ')}
-            </div>
-          )}
+
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <kbd className="px-2 py-1 bg-gray-200 rounded">TAB</kbd>
+            <span>Change type / Autocomplete</span>
+            <kbd className="px-2 py-1 bg-gray-200 rounded">ENTER</kbd>
+            <span>New line</span>
+            <kbd className="px-2 py-1 bg-gray-200 rounded">⌘S</kbd>
+            <span>Save</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <kbd className="px-2 py-1 bg-gray-200 rounded">TAB</kbd>
-          <span>Change type / Autocomplete</span>
-          <kbd className="px-2 py-1 bg-gray-200 rounded">ENTER</kbd>
-          <span>New line</span>
-          <kbd className="px-2 py-1 bg-gray-200 rounded">⌘S</kbd>
-          <span>Save</span>
+        {/* Bottom row - Stats */}
+        <div className="px-6 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <ScriptStats elements={elements} />
+            
+            <div className="text-sm text-gray-600">
+              {elements.length} elements
+            </div>
+            
+            {sceneCharacters.size > 0 && (
+              <div className="text-sm text-gray-500">
+                In scene: {Array.from(sceneCharacters).join(', ')}
+              </div>
+            )}
+          </div>
+
+          <div className="text-xs text-gray-500">
+            Line {currentElementIndex + 1} of {elements.length}
+          </div>
         </div>
       </div>
 
@@ -423,16 +435,11 @@ export default function ScreenplayEditor({
         </div>
       </div>
 
-      <div className="border-t px-6 py-2 bg-gray-50 text-xs text-gray-600 flex items-center justify-between">
-        <div>
-          Line {currentElementIndex + 1} of {elements.length}
+      {autoSave && (
+        <div className="border-t px-6 py-1 bg-gray-50 text-xs text-green-600 text-center">
+          Auto-save enabled
         </div>
-        <div className="flex items-center gap-2">
-          {autoSave && (
-            <span className="text-green-600">Auto-save enabled</span>
-          )}
-        </div>
-      </div>
+      )}
 
       {showShortcuts && (
         <ShortcutsHelp onClose={() => setShowShortcuts(false)} />
