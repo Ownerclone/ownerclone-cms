@@ -413,7 +413,6 @@ export default function ScreenplayEditor({
             <span className="text-green-600">Auto-save enabled</span>
           )}
         </div>
-      </div>
     </div>
   );
 }
