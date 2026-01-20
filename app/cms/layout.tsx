@@ -13,7 +13,7 @@ const navItems = [
   { href: '/cms', label: 'Dashboard', icon: BarChart },
   { href: '/cms/scripts', label: 'Scripts', icon: FileText },
   { href: '/cms/characters', label: 'Characters', icon: Users },
-  { href: '/cms/blog', label: 'Blog Posts', icon: BookOpen },
+  { href: '/cms/blogposts', label: 'Blog Posts', icon: BookOpen },
   { href: '/cms/media', label: 'Media Library', icon: Image },
   { href: '/cms/social', label: 'Social Media', icon: Share2 },
   { href: '/cms/calendar', label: 'Calendar', icon: Calendar },
