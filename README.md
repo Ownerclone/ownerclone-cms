@@ -1,6 +1,6 @@
 # OwnerClone CMS
 
-A screenplay-first content management system built for restaurant content creation with AI integrations.
+A screenplay-first content management system built for restaurant content creation with AI integration.
 
 ## 🎬 Overview
 
