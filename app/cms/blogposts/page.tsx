@@ -42,7 +42,7 @@ export default function BlogListPage() {
     if (!confirm('Delete this blog post?')) return;
 
     try {
-      await fetch('/api/blogposts/' + id, { method: 'DELETE' });
+      await fetch('/api/blog/' + id, { method: 'DELETE' });
       setPosts(posts.filter(p => p.id !== id));
     } catch (error) {
       console.error('Failed to delete:', error);
