@@ -1,7 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// For server-side API routes, we need to handle env vars differently
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+// Add validation to help debug
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables:', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    url: supabaseUrl ? 'present' : 'MISSING',
+    key: supabaseAnonKey ? 'present' : 'MISSING'
+  });
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -43,6 +54,22 @@ export type Database = {
         };
         Insert: Database['public']['Tables']['script_characters']['Row'];
         Update: Partial<Database['public']['Tables']['script_characters']['Insert']>;
+      };
+      blog_posts: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          content: string;
+          excerpt: string;
+          seo_metadata: Record<string, any>;
+          status: 'draft' | 'published';
+          source_script_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['blog_posts']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['blog_posts']['Insert']>;
       };
     };
   };
