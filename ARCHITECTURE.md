@@ -2,7 +2,7 @@
 
 ## System Overview
 
-A screenplay-first CMS that transforms screenplay-formatted content into multiple output formats (blog posts, social media, images, videos) using AI assistance.
+A screenplay-first CMS that transform screenplay-formatted content into multiple output formats (blog posts, social media, images, videos) using AI assistance.
 
 ## Architecture Diagram
 
