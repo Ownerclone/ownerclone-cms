@@ -21,9 +21,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadPost();
-  }, []);
+useEffect(() => {
+  loadPost();
+}, [resolvedParams.id]);
 
   const loadPost = async () => {
     try {
