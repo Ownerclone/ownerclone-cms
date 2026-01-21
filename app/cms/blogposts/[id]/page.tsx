@@ -67,7 +67,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       if (!res.ok) throw new Error('Publish failed');
 
       alert('Post published!');
-      router.push('/cms/blog');
+      router.push('/cms/blogposts');
     } catch (error) {
       console.error('Publish failed:', error);
       alert('Failed to publish post');
@@ -87,7 +87,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Post not found</h2>
-          <Link href="/cms/blog" className="text-blue-600 hover:underline">
+          <Link href="/cms/blogposts" className="text-blue-600 hover:underline">
             Back to posts
           </Link>
         </div>
@@ -102,7 +102,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
-                href="/cms/blog"
+                href="/cms/blogposts"
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 ← Back
