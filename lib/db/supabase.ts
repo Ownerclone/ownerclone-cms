@@ -1,18 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 
-// For server-side API routes, we need to handle env vars differently
+// Get environment variables with fallback for debugging
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Add validation to help debug
+// Debug logging (will show in Vercel function logs)
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
-    hasUrl: !!supabaseUrl,
-    hasKey: !!supabaseAnonKey,
-    url: supabaseUrl ? 'present' : 'MISSING',
-    key: supabaseAnonKey ? 'present' : 'MISSING'
+  console.error('❌ SUPABASE CONFIG ERROR:', {
+    url: supabaseUrl ? '✅ Present' : '❌ MISSING',
+    key: supabaseAnonKey ? '✅ Present' : '❌ MISSING',
+    allEnvKeys: Object.keys(process.env).filter(k => k.includes('SUPABASE'))
   });
+  throw new Error('Missing Supabase environment variables');
 }
+
+console.log('✅ Supabase client initialized');
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
