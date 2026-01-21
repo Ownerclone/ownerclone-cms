@@ -29,7 +29,7 @@ export default function CMSDashboard() {
             title="Blog Posts"
             value="0"
             icon={<BookOpen className="w-6 h-6" />}
-            href="/cms/blogposts"
+            href="/cms/blogpostsposts"
             color="green"
           />
           <StatCard
@@ -60,7 +60,7 @@ export default function CMSDashboard() {
             <ActionCard
               title="New Blog Post"
               description="Create a blog post from scratch"
-              href="/cms/blogposts/new"
+              href="/cms/blogpostsposts/new"
               color="green"
             />
           </div>

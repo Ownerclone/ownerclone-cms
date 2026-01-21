@@ -42,7 +42,7 @@ export default function NewBlogPostPage() {
       if (!res.ok) throw new Error('Save failed');
 
       const result = await res.json();
-      router.push('/cms/blogposts/' + result.post.id);
+      router.push('/cms/blogpostsposts/' + result.post.id);
     } catch (error) {
       console.error('Save failed:', error);
       alert('Failed to save post');
@@ -66,7 +66,7 @@ export default function NewBlogPostPage() {
       }
 
       const result = await res.json();
-      router.push('/cms/blogposts/' + result.post.id);
+      router.push('/cms/blogpostsposts/' + result.post.id);
     } catch (error: any) {
       console.error('Conversion failed:', error);
       alert('Failed to convert script: ' + error.message);
