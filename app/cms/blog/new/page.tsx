@@ -7,7 +7,7 @@ export default function BlogNewRedirect() {
   const router = useRouter();
   
   useEffect(() => {
-    router.replace('/cms/blogpostsposts/new');
+    router.replace('/cms/blogposts/new');
   }, [router]);
 
   return (

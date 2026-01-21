@@ -61,7 +61,7 @@ export default function BlogListPage() {
               </p>
             </div>
             <Link
-              href="/cms/blogpostsposts/new"
+              href="/cms/blogposts/new"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               + New Post
@@ -101,7 +101,7 @@ export default function BlogListPage() {
               Create your first blog post or convert from a script
             </p>
             <Link
-              href="/cms/blogpostsposts/new"
+              href="/cms/blogposts/new"
               className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               + Create Post
@@ -112,7 +112,7 @@ export default function BlogListPage() {
             {posts.map((post) => (
               <Link
                 key={post.id}
-                href={'/cms/blogpostsposts/' + post.id}
+                href={'/cms/blogposts/' + post.id}
                 className="block bg-white rounded-lg border p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between">
