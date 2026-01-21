@@ -21,10 +21,6 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  loadPost();
-}, [resolvedParams.id]);
-
   const loadPost = async () => {
     try {
       const res = await fetch('/api/blog/' + resolvedParams.id);
@@ -74,6 +70,11 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+    loadPost();
+  }, [resolvedParams.id]);
+
+  // Conditional returns AFTER all hooks
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
