@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { use } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface BlogPost {
@@ -12,15 +12,16 @@ interface BlogPost {
   status: string;
 }
 
-export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function EditBlogPostPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadPost() {
       try {
-        const res = await fetch('/api/blog/' + resolvedParams.id);
+        const res = await fetch('/api/blog/' + id);
         const data = await res.json();
         setPost(data.post);
       } catch (error) {
@@ -30,8 +31,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       }
     }
     
-    loadPost();
-  }, [resolvedParams.id]);
+    if (id) {
+      loadPost();
+    }
+  }, [id]);
 
   if (loading) {
     return (
